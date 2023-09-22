@@ -3,6 +3,7 @@ const app = express();
 const { Client } = require('pg');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const fs = require('fs');
 
 
 app.use(bodyParser.json());
@@ -59,9 +60,7 @@ app.get('/api/v1/jugadores', (req, res) => {
 // Devuelve todos los datos de un jugador buscado por su ID
 app.get('/api/v1/jugador/:id', (req, res) => {
     const id = req.params.id;
-    const query = `SELECT *
-                FROM jugadores 
-                WHERE id_jugador = $1`;
+    const query = 'SELECT * FROM jugadores WHERE id_jugador = $1';
 
     const values = [id];
     client.query(query, values, (error, results) => {
@@ -127,12 +126,28 @@ app.get('/api/v1/jugador/:id/estadistica', (req, res) => {
     })
 })
 
+// Get del pack "puntos" para el jugador por id
+app.get('/api/v1/jugador/:id/puntos', (req, res) => {
+    const id = req.params.id;
+    const query = 'SELECT nombre, media_sofascore, media_puntos, total_puntos, puntos_buenos FROM jugadores WHERE id_jugador = $1';
+    const values = [id];
+    client.query(query, values, (error, results) => {
+        if (error) {
+            console.error("Error executing MySQL query:", error);
+            res.status(500).json({ error: "Internal Server Error" });
+            return;
+        }
+        const jugadores = results.rows;
+        res.status(200).json({ jugadores });
+    });
+});
+
 // Actualiza la información del jugador que coincida con su ID
 app.patch('/api/v1/jugador/:id/actualizar', (req, res) => {
     const id = req.params.id;
     const {
         propietario, equipo, posicion, titular, partidos_jugados, ranking_general,
-        mejor_fichaje, media_softscore, media_puntos, total_puntos, puntos_buenos, oferta_minima,
+        mejor_fichaje, media_sofascore, media_puntos, total_puntos, puntos_buenos, oferta_minima,
         valor_mercado, valor_mercado_max, valor_mercado_min, ranking_equipo, ranking_posicion,
         tarjeta_amarilla, tarjeta_roja, doble_tarjeta_amarilla, racha, lesion
     } = req.body;
@@ -140,7 +155,7 @@ app.patch('/api/v1/jugador/:id/actualizar', (req, res) => {
     const query = `
         UPDATE jugadores 
         SET propietario = $1, equipo = $2, posicion = $3, titular = $4, partidos_jugados = $5,
-        ranking_general = $6, mejor_fichaje = $7, media_softscore = $8, media_puntos = $9, total_puntos = $10,
+        ranking_general = $6, mejor_fichaje = $7, media_sofascore = $8, media_puntos = $9, total_puntos = $10,
         puntos_buenos = $11, oferta_minima = $12, valor_mercado = $13, valor_mercado_max = $14,
         valor_mercado_min = $15, ranking_equipo = $16, ranking_posicion = $17, tarjeta_amarilla = $18,
         tarjeta_roja = $19, doble_tarjeta_amarilla = $20, racha = $21, lesion = $22
@@ -148,12 +163,12 @@ app.patch('/api/v1/jugador/:id/actualizar', (req, res) => {
 
     const values = [
         propietario, equipo, posicion, titular, partidos_jugados, ranking_general,
-        mejor_fichaje, media_softscore, media_puntos, total_puntos, puntos_buenos, oferta_minima,
+        mejor_fichaje, media_sofascore, media_puntos, total_puntos, puntos_buenos, oferta_minima,
         valor_mercado, valor_mercado_max, valor_mercado_min, ranking_equipo, ranking_posicion,
         tarjeta_amarilla, tarjeta_roja, doble_tarjeta_amarilla, racha, lesion, id
     ];
 
-    client.query(query, values, (error, results) => {
+    client.query(query, values, error => {
         if (error) {
             console.error("Error executing PostgreSQL query:", error);
             res.status(500).json({ error: "Error interno del servidor" });
@@ -167,8 +182,8 @@ app.patch('/api/v1/jugador/:id/actualizar', (req, res) => {
 app.get("/api/v1/jugador/:id/:campo", (req, res) => {
     const id = req.params.id;
     const campo = req.params.campo;
-    const query = `SELECT $2 FROM jugadores WHERE id_jugador = $1`;
-    const values = [id, campo];
+    const query = `SELECT ${campo} FROM jugadores WHERE id_jugador = $1`;
+    const values = [id];
     client.query(query, values, (error, results) => {
         if (error) {
             console.error("Error executing MySQL query:", error);
@@ -181,14 +196,14 @@ app.get("/api/v1/jugador/:id/:campo", (req, res) => {
 });
 
 // Crea un jugador en la BD
-app.post('/api/v1/post/jugador', (req, res) => {
+app.post('/api/v1/post/jugadorManula', (req, res) => {
     const {
         id, nombre, propietario, equipo, posicion, titular, partidos_jugados, ranking_general, ranking_equipo,
         ranking_posicion, media_sofascore, media_puntos, total_puntos, valor_mercado, valor_mercado_max,
         valor_mercado_min, tarjeta_amarilla, tarjeta_roja, doble_tarjeta_amarilla, racha, lesion
     } = req.body;
 
-    const query = `INSERT INTO jugadores (id, nombre, propietario, equipo, posicion, titular, partidos_jugados,
+    const query = `INSERT INTO jugadores (id_jugador, nombre, propietario, equipo, posicion, titular, partidos_jugados,
                     ranking_general, ranking_equipo, ranking_posicion, media_sofascore, media_puntos, total_puntos,
                     valor_mercado, valor_mercado_max, valor_mercado_min, tarjeta_amarilla, tarjeta_roja, doble_tarjeta_amarilla, racha, lesion)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)`;
@@ -199,7 +214,7 @@ app.post('/api/v1/post/jugador', (req, res) => {
         valor_mercado_min, tarjeta_amarilla, tarjeta_roja, doble_tarjeta_amarilla, racha, lesion
     ]
 
-    client.query(query, values, (error, results) => {
+    client.query(query, values, error => {
         if (error) {
             console.error("Error executing MySQL query:", error);
             res.status(500).json({ error: "Internal Server Error" });
@@ -209,21 +224,47 @@ app.post('/api/v1/post/jugador', (req, res) => {
     });
 });
 
-// Get del pack "puntos" para el jugador por id
-app.get('/api/v1/jugador/:id/puntos', (req, res) => {
-    const id = req.params.id;
-    const query = 'SELECT nombre, media_softscore, media_puntos, total_puntos, puntos_buenos FROM jugadores WHERE id_jugador = $1';
-    const values = [id];
-    client.query(query, values, (error, results) => {
-        if (error) {
-            console.error("Error executing MySQL query:", error);
-            res.status(500).json({ error: "Internal Server Error" });
+
+// Crea un jugador en la BD
+app.post('/api/v1/post/jugador', (req, res) => {
+    fs.readFile('./resources/datosPost.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error al leer el archivo JSON:', err);
+            res.status(500).send('Error interno del servidor');
             return;
         }
-        const jugadores = results.rows;
-        res.status(200).json({ jugadores });
+
+        try {
+            // Parsea el contenido del archivo JSON
+            const jsonData = JSON.parse(data);
+            const jugador = jsonData;
+                const query = `INSERT INTO jugadores (id_jugador, nombre, propietario, equipo, posicion, titular, partidos_jugados,
+                                    ranking_general, ranking_equipo, ranking_posicion, media_sofascore, media_puntos, total_puntos,
+                                    valor_mercado, valor_mercado_max, valor_mercado_min, tarjeta_amarilla, tarjeta_roja, doble_tarjeta_amarilla, racha, lesion)
+                                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)`;
+
+                const values = [
+                    jugador.id, jugador.nombre, jugador.propietario, jugador.equipo, jugador.posicion, jugador.titular, jugador.partidos_jugados, jugador.ranking_general,
+                    jugador.ranking_equipo, jugador.ranking_posicion, jugador.media_sofascore, jugador.media_puntos,  jugador.total_puntos, jugador.valor_mercado, jugador.valor_mercado_max,
+                    jugador.valor_mercado_min, jugador.tarjeta_amarilla, jugador.tarjeta_roja, jugador.doble_tarjeta_amarilla, jugador.racha, jugador.lesion
+                ]
+
+                client.query(query, values, (error, results) => {
+                    if (error) {
+                        console.error("Error executing MySQL query:", error);
+                        res.status(500).json({ error: "Internal Server Error" });
+                        return;
+                    }
+                });
+
+            res.json({ message: 'Jugadores añadidos' });
+        } catch (parseError) {
+            console.error('Error al analizar el archivo JSON:', parseError);
+            res.status(500).send('Error interno del servidor');
+        }
     });
 });
+
 
 // Get el historial de un jugador por id especificando dias
 app.get('/api/v1/historial_jugador/:id/dias/:dias', (req, res) => {
@@ -281,7 +322,7 @@ app.get('/api/v1/historial_jugador/:id/mercado_valor/dias/:dias', (req, res) => 
 app.get('/api/v1/historial_jugador/:id/puntos/dias/:dias', (req, res) => {
     const id = req.params.id;
     const dias = req.params.dias;
-    const query = 'SELECT nombre, media_softscore, media_puntos, total_puntos, fecha_registro FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;'
+    const query = 'SELECT nombre, media_sofascore, media_puntos, total_puntos, fecha_registro FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;'
     const values = [id, dias];
     client.query(query, values, (error, results) => {
         if (error) {
@@ -316,8 +357,8 @@ app.get('/api/v1/historial_jugador/:id/:campo/dias/:dias', (req, res) => {
     const id = req.params.id;
     const campo = req.params.campo;
     const dias = req.params.dias;
-    const query = 'SELECT $2 FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $3;';
-    const values = [id, campo, dias];
+    const query = `SELECT ${campo} FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;`;
+    const values = [id, dias];
     client.query(query, values, (error, results) => {
         if (error) {
             console.error("Error executing MySQL query:", error);
@@ -340,6 +381,90 @@ app.get('/api/v1/mejor_fichaje', (req, res) => {
         }
         const jugadores = results.rows;
         res.status(200).json({ jugadores });
+    });
+});
+
+// POST de añadir jugadores con el json
+app.post('/api/v1/jugadores/json', (req, res) => {
+    fs.readFile('datos.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error al leer el archivo JSON:', err);
+            res.status(500).send('Error interno del servidor');
+            return;
+        }
+
+        try {
+            // Parsea el contenido del archivo JSON
+            const jsonData = JSON.parse(data);
+            const jugadores = jsonData.jugadores;
+            const jugadoresLength = jugadores.length;
+            for (let index = 0; index < jugadoresLength; index++) {
+                const query = `INSERT INTO jugadores (
+                    id_jugador,
+                    nombre,
+                    propietario,
+                    equipo,
+                    posicion,
+                    titular,
+                    partidos_jugados,
+                    ranking_general,
+                    ranking_equipo,
+                    ranking_posicion,
+                    mejor_fichaje,
+                    media_sofascore,
+                    media_puntos,
+                    total_puntos,
+                    puntos_buenos,
+                    oferta_minima,
+                    valor_mercado,
+                    valor_mercado_max,
+                    valor_mercado_min,
+                    tarjeta_amarilla,
+                    tarjeta_roja,
+                    doble_tarjeta_amarilla,
+                    racha,
+                    lesion
+                ) VALUES (
+                    ${jugadores[index].id},
+                    ${jugadores[index].nombre},
+                    ${jugadores[index].propietario},
+                    ${jugadores[index].equipo},
+                    ${jugadores[index].posicion},
+                    ${jugadores[index].titular},
+                    ${jugadores[index].partidos_jugados},
+                    ${jugadores[index].ranking_general},
+                    ${jugadores[index].ranking_equipo},
+                    ${jugadores[index].ranking_posicion},
+                    ${jugadores[index].mejor_fichaje},
+                    ${jugadores[index].media_sofascore},
+                    ${jugadores[index].media_puntos},
+                    ${jugadores[index].total_puntos},
+                    ${jugadores[index].puntos_buenos},
+                    ${jugadores[index].oferta_minima},
+                    ${jugadores[index].valor_mercado},
+                    ${jugadores[index].valor_mercado_max},
+                    ${jugadores[index].valor_mercado_min},
+                    ${jugadores[index].tarjeta_amarilla},
+                    ${jugadores[index].tarjeta_roja},
+                    ${jugadores[index].doble_tarjeta_amarilla},
+                    ${jugadores[index].racha},
+                    ${jugadores[index].lesion}
+                )`;
+                client.query(query, (error, results) => {
+                    if (error) {
+                        console.error("Error executing MySQL query:", error);
+                        res.status(500).json({ error: "Internal Server Error" });
+                        return;
+                    }
+                });
+            }
+
+
+            res.json({ message: 'Jugadores añadidos' });
+        } catch (parseError) {
+            console.error('Error al analizar el archivo JSON:', parseError);
+            res.status(500).send('Error interno del servidor');
+        }
     });
 });
 
