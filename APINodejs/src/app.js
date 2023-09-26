@@ -21,30 +21,15 @@ const client = new Client({
 client.connect();
 /*
 Endpoints
-GET /jugadores
-GET /jugador/:{id}
-GET /jugador/:{id}/general
-GET /jugador/:{id}/infoMercado
-GET /jugador/:{id}/estadistica
-GET /jugador/:{id}/:campo
-PATCH /jugador/:{id}/actualizar
-GET /jugador/:{id}/:{campo}
-Post /post/jugador
-GET /get/jugador/:{id}/puntos
-GET /get/historial_jugador/:{id}/dias/:{dias}
-GET /get/historial_jugador/:{id}/general/dias/:{dias}
-GET /get/historial_jugador/:{id}/mercado_valor/dias/:{dias}
-GET /get/historial_jugador/:{id}/puntos/dias/:{dias}
-GET /get/historial_jugador/:{id}/estadistica/dias/:{dias}
-GET /get/historial_jugador/:{id}/:campo/dias/:{dias}
-GET /get/mejor_fichaje
+
 */
 
 
 // Get de todos los jugadores
 app.get('/api/v1/jugadores', (req, res) => {
-    const query = `SELECT *
-                FROM jugadores`;
+    const id = req.params.id;
+    const campos = req.query.campos;
+    const query = campos ? `SELECT ${campos} FROM jugadores` : `SELECT * FROM jugadores`;
     client.query(query, (error, results) => {
         if (error) {
             console.error("Error executing MySQL query:", error);
@@ -58,12 +43,11 @@ app.get('/api/v1/jugadores', (req, res) => {
 
 
 // Devuelve todos los datos de un jugador buscado por su ID
-app.get('/api/v1/jugador/:id', (req, res) => {
+app.get('/api/v1/jugadores/:id', (req, res) => {
     const id = req.params.id;
-    const query = 'SELECT * FROM jugadores WHERE id_jugador = $1';
-
-    const values = [id];
-    client.query(query, values, (error, results) => {
+    const campos = req.query.campos;
+    const query = campos ? `SELECT ${campos} FROM jugadores WHERE id_jugador = ${id}` : `SELECT * FROM jugadores WHERE id_jugador = ${id}`;
+    client.query(query, (error, results) => {
         if (error) {
             console.error("Error executing MySQL query:", error);
             res.status(500).json({ error: "Internal Server Error" });
@@ -73,13 +57,13 @@ app.get('/api/v1/jugador/:id', (req, res) => {
         res.status(200).json({ jugador });
     });
 });
-
+/*
 // Devuelve los datos generales de un jugador buscando por su ID
-app.get("/api/v1/jugador/:id/general", (req, res) => {
+app.get("/api/v1/jugadores/:id/general", (req, res) => {
     const id = req.params.id;
-    const query = "SELECT nombre, propietario, equipo, posicion, titular, partidos_jugados, mejor_fichaje, racha, lesion FROM jugadores WHERE id_jugador = $1;";
+    const query = `SELECT nombre, propietario, equipo, posicion, titular, partidos_jugados, mejor_fichaje, racha, lesion FROM jugadores WHERE id_jugador = $1;`;
     const values = [id];
-    client.query(query, values, (error, results) => {
+    client.query(query,values, (error, results) => {
         if (error) {
             console.error("Error executing MySQL query:", error);
             res.status(500).json({ error: "Internal Server Error" });
@@ -91,7 +75,7 @@ app.get("/api/v1/jugador/:id/general", (req, res) => {
 })
 
 // Devuelve los campos relativos al mercado del jugador buscado por ID.
-app.get('/api/v1/jugador/:id/infoMercado', (req, res) => {
+app.get('/api/v1/jugadores/:id/infoMercado', (req, res) => {
     const id = req.params.id;
     const query = `SELECT nombre, oferta_minima, valor_mercado, valor_mercado_max, valor_mercado_min
                 FROM jugadores
@@ -109,7 +93,7 @@ app.get('/api/v1/jugador/:id/infoMercado', (req, res) => {
 })
 
 // Devuelve los campos relativos a las estadisticas del jugador buscado por ID.
-app.get('/api/v1/jugador/:id/estadistica', (req, res) => {
+app.get('/api/v1/jugadores/:id/estadistica', (req, res) => {
     const id = req.params.id;
     const query = `SELECT nombre, ranking_general, ranking_equipo, ranking_posicion, tarjeta_amarilla, doble_tarjeta_amarilla, tarjeta_roja
     FROM jugadores
@@ -127,7 +111,7 @@ app.get('/api/v1/jugador/:id/estadistica', (req, res) => {
 })
 
 // Get del pack "puntos" para el jugador por id
-app.get('/api/v1/jugador/:id/puntos', (req, res) => {
+app.get('/api/v1/jugadores/:id/puntos', (req, res) => {
     const id = req.params.id;
     const query = 'SELECT nombre, media_sofascore, media_puntos, total_puntos, puntos_buenos FROM jugadores WHERE id_jugador = $1';
     const values = [id];
@@ -141,9 +125,9 @@ app.get('/api/v1/jugador/:id/puntos', (req, res) => {
         res.status(200).json({ jugadores });
     });
 });
-
+*/
 // Actualiza la información del jugador que coincida con su ID
-app.patch('/api/v1/jugador/:id/actualizar', (req, res) => {
+app.patch('/api/v1/jugadores/:id/actualizar', (req, res) => {
     const id = req.params.id;
     const {
         propietario, equipo, posicion, titular, partidos_jugados, ranking_general,
@@ -177,9 +161,9 @@ app.patch('/api/v1/jugador/:id/actualizar', (req, res) => {
         res.status(200).json({ mensaje: "Jugador actualizado" });
     });
 });
-
+/*
 // Devuelve un dato concreto de un jugador buscando por su ID
-app.get("/api/v1/jugador/:id/:campo", (req, res) => {
+app.get("/api/v1/jugadores/:id/:campo", (req, res) => {
     const id = req.params.id;
     const campo = req.params.campo;
     const query = `SELECT ${campo} FROM jugadores WHERE id_jugador = $1`;
@@ -193,10 +177,10 @@ app.get("/api/v1/jugador/:id/:campo", (req, res) => {
         const jugador = results.rows;
         res.status(200).json({ jugador });
     });
-});
-
+});*/
+/*
 // Crea un jugador en la BD
-app.post('/api/v1/post/jugadorManula', (req, res) => {
+app.post('/api/v1/post/jugadorManual', (req, res) => {
     const {
         id, nombre, propietario, equipo, posicion, titular, partidos_jugados, ranking_general, ranking_equipo,
         ranking_posicion, media_sofascore, media_puntos, total_puntos, valor_mercado, valor_mercado_max,
@@ -223,10 +207,10 @@ app.post('/api/v1/post/jugadorManula', (req, res) => {
         res.status(200).json({ mensaje: "Jugador creado" });
     });
 });
+*/
 
-
-// Crea un jugador en la BD
-app.post('/api/v1/post/jugador', (req, res) => {
+// Crea un jugador en la BD en caso de que no exista el patch
+app.post('/api/v1/jugadores', (req, res) => {
     fs.readFile('./resources/datosPost.json', 'utf8', (err, data) => {
         if (err) {
             console.error('Error al leer el archivo JSON:', err);
@@ -265,9 +249,9 @@ app.post('/api/v1/post/jugador', (req, res) => {
     });
 });
 
-
+/*
 // Get el historial de un jugador por id especificando dias
-app.get('/api/v1/historial_jugador/:id/dias/:dias', (req, res) => {
+app.get('/api/v1/historial_jugadores/:id/dias/:dias', (req, res) => {
     const id = req.params.id;
     const dias = req.params.dias;
     const query = 'SELECT * FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;';
@@ -285,7 +269,7 @@ app.get('/api/v1/historial_jugador/:id/dias/:dias', (req, res) => {
 });
 
 // Get del historial de un jugador por id especificando dias el paquete general
-app.get('/api/v1/historial_jugador/:id/general/dias/:dias', (req, res) => {
+app.get('/api/v1/historial_jugadores/:id/general/dias/:dias', (req, res) => {
     const id = req.params.id;
     const dias = req.params.dias;
     const query = 'SELECT nombre, equipo, posicion, titular, partidos_jugados, racha, fecha_registro FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;'
@@ -302,7 +286,7 @@ app.get('/api/v1/historial_jugador/:id/general/dias/:dias', (req, res) => {
 });
 
 // Get del historial de un jugador por id especificando dias el paquete mercado valor
-app.get('/api/v1/historial_jugador/:id/mercado_valor/dias/:dias', (req, res) => {
+app.get('/api/v1/historial_jugadores/:id/mercado_valor/dias/:dias', (req, res) => {
     const id = req.params.id;
     const dias = req.params.dias;
     const query = 'SELECT nombre, valor_mercado, fecha_registro FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;'
@@ -319,7 +303,7 @@ app.get('/api/v1/historial_jugador/:id/mercado_valor/dias/:dias', (req, res) => 
 });
 
 // Get del historial de un jugador por id especificando dias el paquete puntos
-app.get('/api/v1/historial_jugador/:id/puntos/dias/:dias', (req, res) => {
+app.get('/api/v1/historial_jugadores/:id/puntos/dias/:dias', (req, res) => {
     const id = req.params.id;
     const dias = req.params.dias;
     const query = 'SELECT nombre, media_sofascore, media_puntos, total_puntos, fecha_registro FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;'
@@ -336,7 +320,7 @@ app.get('/api/v1/historial_jugador/:id/puntos/dias/:dias', (req, res) => {
 });
 
 // Get del historial de un jugador por id especificando dias el paquete estadistica
-app.get('/api/v1/historial_jugador/:id/estadistica/dias/:dias', (req, res) => {
+app.get('/api/v1/historial_jugadores/:id/estadistica/dias/:dias', (req, res) => {
     const id = req.params.id;
     const dias = req.params.dias;
     const query = 'SELECT nombre, ranking_general, ranking_equipo, ranking_posicion, tarjeta_amarilla, doble_tarjeta_amarilla, tarjeta_roja FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;'
@@ -351,13 +335,14 @@ app.get('/api/v1/historial_jugador/:id/estadistica/dias/:dias', (req, res) => {
         res.status(200).json({ jugadores });
     });
 });
-
+*/
 // Get un campo del historial de un jugador por id especificando dias el paquete estadistica
-app.get('/api/v1/historial_jugador/:id/:campo/dias/:dias', (req, res) => {
+app.get('/api/v1/historial_jugadores/:id', (req, res) => {
     const id = req.params.id;
-    const campo = req.params.campo;
-    const dias = req.params.dias;
-    const query = `SELECT ${campo} FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;`;
+    // Aqui se añaden los campos que quieras formato "?campos=campo,campo,..."
+    const campos = req.query.campos;
+    const dias = req.query.dias;
+    const query = campos ? `SELECT ${campos} FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;` : `SELECT ${campos} FROM historial_jugadores WHERE id_jugador = $1 ORDER BY id_historial_jugador DESC LIMIT $2;`;
     const values = [id, dias];
     client.query(query, values, (error, results) => {
         if (error) {
@@ -371,7 +356,7 @@ app.get('/api/v1/historial_jugador/:id/:campo/dias/:dias', (req, res) => {
 });
 
 // Get al mejor fichaje de todos los que hay
-app.get('/api/v1/mejor_fichaje', (req, res) => {
+app.get('/api/v1/jugadores/mejor-fichaje', (req, res) => {
     const query = 'SELECT * FROM jugadores WHERE mejor_fichaje = true';
     client.query(query, (error, results) => {
         if (error) {
@@ -384,7 +369,7 @@ app.get('/api/v1/mejor_fichaje', (req, res) => {
     });
 });
 
-// POST de añadir jugadores con el json
+// POST de añadir todos los jugadores con el json
 app.post('/api/v1/jugadores/json', (req, res) => {
     fs.readFile('datos.json', 'utf8', (err, data) => {
         if (err) {
@@ -458,8 +443,6 @@ app.post('/api/v1/jugadores/json', (req, res) => {
                     }
                 });
             }
-
-
             res.json({ message: 'Jugadores añadidos' });
         } catch (parseError) {
             console.error('Error al analizar el archivo JSON:', parseError);
