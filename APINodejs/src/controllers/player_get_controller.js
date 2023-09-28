@@ -23,7 +23,7 @@ const getTodosJugadores = (req, res) => {
     }*/
     let campos = req.query.campos;
     if (!campos) campos = "*";
-    client.query(queries.getJugadores(campos, where), (error, results) => {
+    client.query(queries.getJugadores(campos), (error, results) => {
         if (error) {
             console.error('Error executing PostgreSQL query:', error);
             res.status(500).json({ error: 'Internal Server Error' });
