@@ -4,7 +4,7 @@ const jugadoresController = require('../controllers/historial_get_controller.js'
 
 /**
  * @openapi
- * /api/v1/historial-jugadores/{id}:
+ * /api/v1/historialJugadores/{id}:
  *   get:
  *     tags:
  *     - "Historial Jugadores"
@@ -86,12 +86,12 @@ const jugadoresController = require('../controllers/historial_get_controller.js'
  *       500:
  *         description: Internal server error.
  */
-router.get('/historial-jugadores/:id', jugadoresController.getHistorialByID);
+router.get('/historialJugadores/:id', jugadoresController.getHistorialByID);
 
 
 /**
  * @openapi
- * /api/v1/historial-jugadores/fecha/fecha:
+ * /api/v1/historialJugadores/fecha/{fecha}:
  *   get:
 *     tags:
  *     - "Historial Jugadores"
@@ -174,6 +174,6 @@ router.get('/historial-jugadores/:id', jugadoresController.getHistorialByID);
  *         description: Internal server error.
  */
 
-router.get("/historial-jugadores/fecha/:fecha", jugadoresController.getHistorialByDia);
+router.get("/historialJugadores/fecha/:fecha", jugadoresController.getHistorialByDia);
 
 module.exports = router;
