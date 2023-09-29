@@ -5,7 +5,13 @@ const limiter = rateLimit({
     max: 5 // limitamos cada ip a 100 peticiones cada 15 mins, se puede cambiar segun necesidad
   });
 
+  /*Prueba git hub
+  safsafsa
+  asfsaffsa
+  asfsafsa
+  safsafsaf
   
+  */
   module.exports= {
     limiter
   };
