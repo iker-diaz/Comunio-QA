@@ -4,26 +4,37 @@ const jugadoresController = require('../controllers/update_controller.js');
 
 /**
  * @openapi
- * /api/v1/historial-jugadores/{id}/actualizar:
+ * /api/v1/jugadores/{id}/actualizar:
  *   patch:
  *     tags:
  *     - "Gestion de jugadores"
  *     summary: Actualiza un jugador a traves de su id.
  *     description: Actualiza un jugador a traves de su id.
  *     responses:
- *       200:
- *         description: Jugador actualizado.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
+ *       '201':
+ *         description: Registro guardado con exito
+ *       '400':
+ *         description: Bad request. Error en la solicitud.
+ *       '500':
+ *         description: Error interno del servidor.
+ *       default:
+ *         description: Error no especificado
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array  
+ *             items:        
+ *               type: object
  *               properties:
  *                 id_jugador:
  *                   type: integer
  *                 nombre:
  *                   type: string
  *                 fecha_registro:
- *                   type: date
+ *                   type: string  
+ *                   format: date  
  *                 equipo:
  *                   type: string
  *                 ranking_general:
@@ -45,7 +56,7 @@ const jugadoresController = require('../controllers/update_controller.js');
  *                 media_sofascore:
  *                   type: number
  *                   format: double
- *                   example: "0.00"
+ *                   example: 0.00
  *                 media_puntos:
  *                   type: number
  *                   format: double
@@ -70,6 +81,31 @@ const jugadoresController = require('../controllers/update_controller.js');
  *                   type: string
  *                 lesion:
  *                   type: string
+ *           example:
+ *             - id_jugador: 1
+ *               nombre: Jugador 1
+ *               fecha_registro: "2023-09-29"
+ *               equipo: Equipo A
+ *               ranking_general: 1
+ *               ranking_equipo: 1
+ *               ranking_posicion: 1
+ *               tarjeta_amarilla: 2
+ *               tarjeta_roja: 0
+ *               doble_tarjeta_amarilla: 0
+ *               titular: true
+ *               mejor_fichaje: true
+ *               media_sofascore: 85.5
+ *               media_puntos: 8.2
+ *               total_puntos: 164
+ *               puntos_buenos: 10
+ *               oferta_minima: 100000
+ *               valor_mercado: 500000
+ *               propietario: Usuario1
+ *               posicion: Delantero
+ *               racha: Ganando
+ *               partidos_jugados: 10
+ *               lesion: Ninguna
+ *
  *       500:
  *         description: Internal server error.
  */
@@ -84,19 +120,30 @@ router.patch("/jugadores/:id/actualizar", jugadoresController.patchJugador);
  *     summary: Crea a un jugador.
  *     description: Crea a un jugador.
  *     responses:
- *       200:
- *         description: Jugador actualizado.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
+ *       '201':
+ *         description: Registro guardado con exito
+ *       '400':
+ *         description: Bad request. Error en la solicitud.
+ *       '500':
+ *         description: Error interno del servidor.
+ *       default:
+ *         description: Error no especificado
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array  
+ *             items:        
+ *               type: object
  *               properties:
  *                 id_jugador:
  *                   type: integer
  *                 nombre:
  *                   type: string
  *                 fecha_registro:
- *                   type: date
+ *                   type: string  
+ *                   format: date  
  *                 equipo:
  *                   type: string
  *                 ranking_general:
@@ -118,7 +165,7 @@ router.patch("/jugadores/:id/actualizar", jugadoresController.patchJugador);
  *                 media_sofascore:
  *                   type: number
  *                   format: double
- *                   example: "0.00"
+ *                   example: 0.00
  *                 media_puntos:
  *                   type: number
  *                   format: double
@@ -143,6 +190,31 @@ router.patch("/jugadores/:id/actualizar", jugadoresController.patchJugador);
  *                   type: string
  *                 lesion:
  *                   type: string
+ *           example:
+ *             - id_jugador: 1
+ *               nombre: Jugador 1
+ *               fecha_registro: "2023-09-29"
+ *               equipo: Equipo A
+ *               ranking_general: 1
+ *               ranking_equipo: 1
+ *               ranking_posicion: 1
+ *               tarjeta_amarilla: 2
+ *               tarjeta_roja: 0
+ *               doble_tarjeta_amarilla: 0
+ *               titular: true
+ *               mejor_fichaje: true
+ *               media_sofascore: 85.5
+ *               media_puntos: 8.2
+ *               total_puntos: 164
+ *               puntos_buenos: 10
+ *               oferta_minima: 100000
+ *               valor_mercado: 500000
+ *               propietario: Usuario1
+ *               posicion: Delantero
+ *               racha: Ganando
+ *               partidos_jugados: 10
+ *               lesion: Ninguna
+ *
  *       500:
  *         description: Internal server error.
  */
@@ -157,19 +229,30 @@ router.post("/jugadores/insertar", jugadoresController.postJugador);
  *     summary: Crea todos los jugadores en la tabla de jugadores en la base de datos a traves del JSON del Webscraping.
  *     description: Crea todos los jugadores en la base de datos a traves del JSON del Webscraping.
  *     responses:
- *       200:
- *         description: Jugador actualizado.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
+ *       '201':
+ *         description: Registro guardado con exito
+ *       '400':
+ *         description: Bad request. Error en la solicitud.
+ *       '500':
+ *         description: Error interno del servidor.
+ *       default:
+ *         description: Error no especificado
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array  
+ *             items:        
+ *               type: object
  *               properties:
  *                 id_jugador:
  *                   type: integer
  *                 nombre:
  *                   type: string
  *                 fecha_registro:
- *                   type: date
+ *                   type: string  
+ *                   format: date  
  *                 equipo:
  *                   type: string
  *                 ranking_general:
@@ -191,7 +274,7 @@ router.post("/jugadores/insertar", jugadoresController.postJugador);
  *                 media_sofascore:
  *                   type: number
  *                   format: double
- *                   example: "0.00"
+ *                   example: 0.00
  *                 media_puntos:
  *                   type: number
  *                   format: double
@@ -216,6 +299,31 @@ router.post("/jugadores/insertar", jugadoresController.postJugador);
  *                   type: string
  *                 lesion:
  *                   type: string
+ *           example:
+ *             - id_jugador: 1
+ *               nombre: Jugador 1
+ *               fecha_registro: "2023-09-29"
+ *               equipo: Equipo A
+ *               ranking_general: 1
+ *               ranking_equipo: 1
+ *               ranking_posicion: 1
+ *               tarjeta_amarilla: 2
+ *               tarjeta_roja: 0
+ *               doble_tarjeta_amarilla: 0
+ *               titular: true
+ *               mejor_fichaje: true
+ *               media_sofascore: 85.5
+ *               media_puntos: 8.2
+ *               total_puntos: 164
+ *               puntos_buenos: 10
+ *               oferta_minima: 100000
+ *               valor_mercado: 500000
+ *               propietario: Usuario1
+ *               posicion: Delantero
+ *               racha: Ganando
+ *               partidos_jugados: 10
+ *               lesion: Ninguna
+ *
  *       500:
  *         description: Internal server error.
  */
@@ -223,26 +331,37 @@ router.post("/jugadores", jugadoresController.postJugadores);
 
 /**
  * @openapi
- * /api/v1/historial-jugadores:
+ * /api/v1/historialJugadores:
  *   post:
  *     tags:
  *     - "Gestion de jugadores"
- *     summary: Crea todos los jugadores en la tabla de historial en la base de datos a traves del JSON del Webscraping.
- *     description: Crea todos los jugadores en la tabla de historial en la base de datos a traves del JSON del Webscraping.
+ *     summary: Crea todos los jugadores en la tabla de historial en la base de datos a través del JSON del webscraping.
+ *     description: Crea todos los jugadores en la tabla de historial en la base de datos a través del JSON del webscraping.
  *     responses:
- *       200:
- *         description: Jugador actualizado.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
+ *       '201':
+ *         description: Registro guardado con exito
+ *       '400':
+ *         description: Bad request. Error en la solicitud.
+ *       '500':
+ *         description: Error interno del servidor.
+ *       default:
+ *         description: Error no especificado
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array  
+ *             items:        
+ *               type: object
  *               properties:
  *                 id_jugador:
  *                   type: integer
  *                 nombre:
  *                   type: string
  *                 fecha_registro:
- *                   type: date
+ *                   type: string  
+ *                   format: date  
  *                 equipo:
  *                   type: string
  *                 ranking_general:
@@ -264,7 +383,7 @@ router.post("/jugadores", jugadoresController.postJugadores);
  *                 media_sofascore:
  *                   type: number
  *                   format: double
- *                   example: "0.00"
+ *                   example: 0.00
  *                 media_puntos:
  *                   type: number
  *                   format: double
@@ -289,9 +408,31 @@ router.post("/jugadores", jugadoresController.postJugadores);
  *                   type: string
  *                 lesion:
  *                   type: string
- *       500:
- *         description: Internal server error.
+ *           example:
+ *             - id_jugador: 1
+ *               nombre: Jugador 1
+ *               fecha_registro: "2023-09-29"
+ *               equipo: Equipo A
+ *               ranking_general: 1
+ *               ranking_equipo: 1
+ *               ranking_posicion: 1
+ *               tarjeta_amarilla: 2
+ *               tarjeta_roja: 0
+ *               doble_tarjeta_amarilla: 0
+ *               titular: true
+ *               mejor_fichaje: true
+ *               media_sofascore: 85.5
+ *               media_puntos: 8.2
+ *               total_puntos: 164
+ *               puntos_buenos: 10
+ *               oferta_minima: 100000
+ *               valor_mercado: 500000
+ *               propietario: Usuario1
+ *               posicion: Delantero
+ *               racha: Ganando
+ *               partidos_jugados: 10
+ *               lesion: Ninguna
  */
-router.post("/historial-jugadores", jugadoresController.insertHistorial);
+router.post("/historialJugadores", jugadoresController.insertHistorial);
 
 module.exports = router;

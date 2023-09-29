@@ -297,7 +297,7 @@ router.get('/jugadores/:id', jugadoresController.getJugadorById);
 
 /**
  * @openapi
- * /api/v1/mejor-fichaje:
+ * /api/v1/mejorFichaje:
  *   get:
  *     tags:
  *     - "Jugadores"
@@ -394,11 +394,11 @@ router.get('/jugadores/:id', jugadoresController.getJugadorById);
  *       500:
  *         description: Internal server error.
  */
-router.get('/mejor-fichaje', jugadoresController.getMejorFichaje);
+router.get('/mejorFichaje', jugadoresController.getMejorFichaje);
 
 /**
  * @openapi
- * /api/v1/equipo/{equipo}:
+ * /api/v1/equipo/{nombreEquipo}:
  *   get:
  *     tags:
  *     - "Jugadores"
@@ -496,6 +496,6 @@ router.get('/mejor-fichaje', jugadoresController.getMejorFichaje);
  *       500:
  *         description: Internal server error.
  */
-router.get('/equipo/:equipo', jugadoresController.getJugadorByEquipo);
+router.get('/equipo/:nombreEquipo', jugadoresController.getJugadorByEquipo);
 
 module.exports = router;
