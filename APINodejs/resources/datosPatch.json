@@ -1,0 +1,23 @@
+
+    {
+        "id": "2774",
+        "propietario": "pepeluis69",
+        "equipo": "Osasuna",
+        "posicion": "PT",
+        "titular": true,
+        "partidos_jugados": "3/5",
+        "ranking_general": 237,
+        "ranking_equipo": 14,
+        "ranking_posicion": 19,
+        "media_sofascore": 6.8,
+        "media_puntos": 4.0,
+        "total_puntos": 12,
+        "valor_mercado": 1630000,
+        "valor_mercado_max": 440000,
+        "valor_mercado_min": 3870000,
+        "tarjeta_amarilla": 0,
+        "tarjeta_roja": 0,
+        "doble_tarjeta_amarilla": 0,
+        "racha": "Mala",
+        "lesion": "NO"
+    }
