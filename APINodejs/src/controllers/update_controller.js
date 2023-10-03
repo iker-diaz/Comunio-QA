@@ -4,7 +4,7 @@ const client = db.getClientForPrueba();
 const fs = require('fs');
 client.connect();
 
-//Funcion para actualizar los datos del jugador
+//Funcion para actualizar los datos de un jugador
 const patchJugador = (req, res, next) => {
     const id = req.params.id;
     const {
@@ -29,7 +29,7 @@ const patchJugador = (req, res, next) => {
     });
 };
 
-//Funcion para crear un jugador nuevo
+//Funcion para insertar un jugador en la tabla de jugadores
 const postJugador = (req, res, next) => {
     const {
         id, nombre, propietario, equipo, posicion, titular, partidos_jugados, ranking_general,
@@ -51,7 +51,7 @@ const postJugador = (req, res, next) => {
     });
 
 };
-
+//Funcion para insertar todos los jugadores en  la tabla de jugadores
 const postJugadores = (req, res, next) => {
     fs.readFile(req.body, 'utf8', (err, data) => {
         if (err) {
@@ -107,7 +107,7 @@ const postJugadores = (req, res, next) => {
     });
 };
 
-//Funcion para guardar los datugadores en el hos de los jistorial
+//Funcion para insertar los datos de los jugadores en la tabla de historial
 const insertHistorial = (req, res) => {
     const date = new Date();
     let day = date.getDate();
@@ -138,7 +138,6 @@ const insertHistorial = (req, res) => {
     formattedDate += month + "-";
     if (day < 10) formattedDate += "0";
     formattedDate += day;
-    console.log(formattedDate);
 
     client.query(queries.getJugadores("*"), (error1, results) => {
         if (error1) {
@@ -186,3 +185,4 @@ module.exports = {
     postJugadores,
     insertHistorial
 };
+

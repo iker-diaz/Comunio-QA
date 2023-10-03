@@ -21,9 +21,12 @@ const getTodosJugadores = (req, res) => {
             }
         }
     }*/
-    let campos = req.query.campos;
-    if (!campos) campos = "*";
-    client.query(queries.getJugadores(campos), (error, results) => {
+    let query = req.query;
+    let where = "";
+    if(Object.keys(query).length > 0){
+        where = queries.constructWhereStatement(query);
+    }
+    client.query(queries.getJugadores(where), (error, results) => {
         if (error) {
             console.error('Error executing PostgreSQL query:', error);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -67,10 +70,9 @@ const getMejorFichaje = (req, res) => {
 };
 
 const getJugadorByEquipo = (req, res) => {
-    let equipo = req.params.equipo
+    const equipo = req.params.nombreEquipo;
     let campos = req.query.campos;
     if (!campos) campos = "*";
-    console.log(equipo);
     const values = [equipo];
     client.query(queries.getJugadorByEquipo(campos), values, (error, results) => {
         if (error) {
@@ -82,6 +84,7 @@ const getJugadorByEquipo = (req, res) => {
         res.status(200).json({ jugadores });
     });
 };
+
 const getJugadoresMercado = (req, res) => {
     let campos = req.query.campos;
     if (!campos) campos = "*";
